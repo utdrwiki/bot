@@ -7,7 +7,6 @@ import {
 } from '../types';
 import {InteractionType} from 'discord-interactions';
 import deltarunewhen from './deltarunewhen';
-import verify from './verify';
 
 interface IntOption {
     type: typeof INT_OPTION;
@@ -75,7 +74,6 @@ export function getStringOption(
 }
 
 const commands: Command[] = [
-    verify,
     deltarunewhen
 ];
 

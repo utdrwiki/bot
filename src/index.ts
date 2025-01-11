@@ -1,5 +1,6 @@
 'use strict';
 import {handleInteraction} from './discord';
+import {handleOAuth} from './oauth';
 
 /**
  * Handles HTTP requests to the worker.
@@ -16,6 +17,8 @@ function fetch(
     switch (new URL(request.url).pathname) {
         case '/interactions':
             return handleInteraction(request, env);
+        case '/oauth':
+            return handleOAuth(request, env);
         default:
             return new Response(null, {
                 headers: {

@@ -7,6 +7,7 @@ import {
 import {InteractionResponse, getUser} from '../types';
 import {addRole, ephemeralMessage} from '../discord';
 import {ComponentInteraction} from '.';
+import {generateToken} from '../crypto';
 
 /**
  * Responds to the user who clicked on the verify button.
@@ -38,14 +39,15 @@ async function handle(
         }
         return ephemeralMessage('Verification successful!');
     }
-    const verificationUrl = `https://undertale.fandom.com/wiki/Special:VerifyUser?user=${encodeURIComponent(user.username)}&c=wb&useskin=fandomdesktop`;
+    const token = await generateToken(user.id, env.SECRET_KEY);
+    const verificationUrl = `${env.WIKI_REST_API}/oauth2/authorize?response_type=code&client_id=${env.OAUTH_CLIENT_ID}&state=${token}`;
     return {
         data: {
             components: [{
                 components: [
                     {
                         // eslint-disable-next-line camelcase
-                        label: 'Visit the verification page',
+                        label: 'Verify wiki account',
                         style: ButtonStyleTypes.LINK,
                         type: MessageComponentTypes.BUTTON,
                         url: verificationUrl
@@ -53,9 +55,8 @@ async function handle(
                 ],
                 type: MessageComponentTypes.ACTION_ROW
             }],
-            content: `**To continue verification, please visit this link:** <${verificationUrl}>.
-It will tell you to click a button, then provide you with a command to run. After you have the command, come back here and run it.
-You do not have to do anything else on the linked page other than click the button and copy the command.`,
+            // eslint-disable-next-line max-len
+            content: '**To continue verification, please visit the button link below!** You will have to log into your wiki account, then confirm you are trying to verify your Discord account.',
             flags: 64
         },
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
