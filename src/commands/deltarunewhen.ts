@@ -1,7 +1,7 @@
 'use strict';
-import {InteractionResponseType} from 'discord-interactions';
 import {CommandInteraction} from '.';
 import {InteractionResponse} from '../types';
+import {InteractionResponseType} from 'discord-interactions';
 
 /**
  * Tells you the % of time that elapsed between the release of Deltarune

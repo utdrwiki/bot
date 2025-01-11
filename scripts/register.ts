@@ -1,6 +1,6 @@
 'use strict';
-import {config} from 'dotenv';
 import commands from '../src/commands';
+import {config} from 'dotenv';
 
 /**
  * Registers the bot commands with Discord.

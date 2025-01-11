@@ -1,6 +1,11 @@
 'use strict';
+import {
+    INT_OPTION,
+    InteractionResponse,
+    MemberOrUser,
+    STRING_OPTION
+} from '../types';
 import {InteractionType} from 'discord-interactions';
-import {INT_OPTION, InteractionResponse, MemberOrUser, STRING_OPTION} from '../types';
 import deltarunewhen from './deltarunewhen';
 import verify from './verify';
 

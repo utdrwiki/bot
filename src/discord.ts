@@ -1,8 +1,15 @@
 'use strict';
-import {InteractionResponseType, InteractionType, verifyKey} from 'discord-interactions';
+import {
+    InteractionResponse,
+    PingInteraction
+} from './types';
+import {
+    InteractionResponseType,
+    InteractionType,
+    verifyKey
+} from 'discord-interactions';
 import commands, {CommandInteraction} from './commands';
 import components, {ComponentInteraction} from './components';
-import {InteractionResponse, PingInteraction} from './types';
 
 export type Interaction =
     PingInteraction |
@@ -47,7 +54,6 @@ async function handleComponent(
         return new Response('Nonexistent component.', {status: 400});
     }
     const response = await component(data, env);
-    console.log(response);
     return new Response(JSON.stringify(response), {
         headers: {
             'Content-Type': 'application/json'

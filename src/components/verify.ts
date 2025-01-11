@@ -1,8 +1,12 @@
 'use strict';
-import {ButtonStyleTypes, InteractionResponseType, MessageComponentTypes} from 'discord-interactions';
-import {ComponentInteraction} from '.';
-import {addRole, ephemeralMessage} from '../discord';
+import {
+    ButtonStyleTypes,
+    InteractionResponseType,
+    MessageComponentTypes
+} from 'discord-interactions';
 import {InteractionResponse, getUser} from '../types';
+import {addRole, ephemeralMessage} from '../discord';
+import {ComponentInteraction} from '.';
 
 /**
  * Responds to the user who clicked on the verify button.
