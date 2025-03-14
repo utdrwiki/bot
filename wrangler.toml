@@ -14,4 +14,4 @@ DISCORD_INVITE = "https://discord.gg/tFgFwCFndp"
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
 binding = "UTW_BOT"
-id = "767779fec64b44d7b68e922645811353"
+id = "52639a1752f2474b9b86e74ba07a06cc"
