@@ -15,4 +15,6 @@ interface Env {
 	OAUTH_CLIENT_SECRET: string;
 	SECRET_KEY: string;
 	WIKI_REST_API: string;
+	ZEPTOMAIL_AUTH: string;
+	NOTIFICATION_CHANNEL: string;
 }

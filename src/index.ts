@@ -1,6 +1,7 @@
 'use strict';
 import {handleInteraction} from './discord';
 import {handleOAuth} from './oauth';
+import {handleZeptomail} from './zeptomail';
 
 /**
  * Handles HTTP requests to the worker.
@@ -19,6 +20,8 @@ function fetch(
             return handleInteraction(request, env);
         case '/oauth':
             return handleOAuth(request, env);
+        case '/zeptomail':
+            return handleZeptomail(request, env);
         default:
             return new Response(null, {
                 headers: {
