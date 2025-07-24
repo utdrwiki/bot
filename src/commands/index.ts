@@ -1,28 +1,39 @@
 'use strict';
 import {
-    INT_OPTION,
+    CommandOptionType,
     InteractionResponse,
-    MemberOrUser,
-    STRING_OPTION
+    MemberOrUser
 } from '../types';
 import {InteractionType} from 'discord-interactions';
 import deltarunewhen from './deltarunewhen';
+import notes from './notes';
 
-interface IntOption {
-    type: typeof INT_OPTION;
+interface BaseOption {
+    name: string;
+}
+
+interface IntOption extends BaseOption {
+    type: CommandOptionType.INT_OPTION;
     value: number;
 }
 
-interface StringOption {
-    type: typeof STRING_OPTION;
+interface StringOption extends BaseOption {
+    type: CommandOptionType.STRING_OPTION;
     value: string;
 }
 
-type CommandOptionValue = IntOption | StringOption;
+interface UserOption extends BaseOption {
+    type: CommandOptionType.USER_OPTION;
+    value: string;
+}
 
-type CommandOption = {
-    name: string;
-} & CommandOptionValue;
+interface Subcommand extends BaseOption {
+    type: CommandOptionType.SUBCOMMAND;
+    // eslint-disable-next-line no-use-before-define
+    options: CommandOption[];
+}
+
+type CommandOption = IntOption | StringOption | UserOption | Subcommand;
 
 interface CommandData {
     name: string;
@@ -39,7 +50,8 @@ interface CommandRegisterOption {
     name: string;
     description: string;
     required?: boolean;
-    type: typeof INT_OPTION | typeof STRING_OPTION;
+    options?: CommandRegisterOption[];
+    type: CommandOptionType;
 }
 
 interface Command {
@@ -53,28 +65,65 @@ interface Command {
 }
 
 /**
- * Retrieves a string option from a command interaction.
+ * Retrieves a string option from a command's options.
  * @param name Option name
- * @param data Command interaction data
+ * @param options Command options
  * @returns Option value
  * @throws {Error} If the option is missing or not a string
  */
 export function getStringOption(
     name: string,
-    data: CommandInteraction
+    options: CommandOption[]
 ): string {
-    const value = data.data.options.find(opt => opt.name === name);
+    const value = options.find(opt => opt.name === name);
     if (!value) {
         throw new Error(`Missing string option "${name}".`);
     }
-    if (value.type !== STRING_OPTION) {
+    if (value.type !== CommandOptionType.STRING_OPTION) {
         throw new Error(`Expected string option "${name}".`);
     }
     return value.value;
 }
 
+/**
+ * Retrieves a user option from a command's options.
+ * @param name Option name
+ * @param options Command options
+ * @returns Option value
+ * @throws {Error} If the option is missing or not a string
+ */
+export function getUserOption(
+    name: string,
+    options: CommandOption[]
+): string {
+    const value = options.find(opt => opt.name === name);
+    if (!value) {
+        throw new Error(`Missing user option "${name}".`);
+    }
+    if (value.type !== CommandOptionType.USER_OPTION) {
+        throw new Error(`Expected user option "${name}".`);
+    }
+    return value.value;
+}
+
+/**
+ * Retrieves the current command's subcommand.
+ * @param options Command options
+ * @returns Subcommand and its data
+ * @throws {Error} If the subcommand is missing
+ */
+export function getSubcommand(options: CommandOption[]): Subcommand {
+    const subcommand = options
+        .find(({type}) => type === CommandOptionType.SUBCOMMAND);
+    if (!subcommand) {
+        throw new Error('Missing subcommand.');
+    }
+    return subcommand as Subcommand;
+}
+
 const commands: Command[] = [
-    deltarunewhen
+    deltarunewhen,
+    notes
 ];
 
 export default commands;

@@ -1,10 +1,14 @@
 'use strict';
 import {InteractionResponseType, InteractionType} from 'discord-interactions';
 
-export const STRING_OPTION = 3;
-export const INT_OPTION = 4;
+export enum CommandOptionType {
+    SUBCOMMAND = 1,
+    STRING_OPTION = 3,
+    INT_OPTION = 4,
+    USER_OPTION = 6
+}
 
-interface User {
+export interface User {
     id: string;
     username: string;
 }
@@ -19,6 +23,7 @@ export interface PingInteraction {
 
 interface InteractionResponseData {
     content?: string;
+    embeds?: object[];
     components?: object[];
     flags?: number;
 }
