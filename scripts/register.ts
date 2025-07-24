@@ -6,7 +6,8 @@ import {config} from 'dotenv';
  * Registers the bot commands with Discord.
  */
 async function main() {
-    const vars = config({path: ['.dev.vars']});
+    const isProduction = process.argv.includes('--prod');
+    const vars = config({path: [isProduction ? '.env' : '.dev.vars']});
     if (!vars.parsed) {
         throw new Error('Failed to load environment variables from .dev.vars.');
     }

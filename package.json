@@ -25,7 +25,9 @@
         "start": "wrangler dev",
         "cf-typegen": "wrangler types",
         "register": "tsx scripts/register.ts",
-        "post": "tsx scripts/post.ts"
+        "register-prod": "tsx scripts/register.ts --prod",
+        "post": "tsx scripts/post.ts",
+        "post-prod": "tsx scripts/post.ts --prod"
     },
     "dependencies": {
         "discord-interactions": "4.1.0"
