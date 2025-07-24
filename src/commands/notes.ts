@@ -41,7 +41,7 @@ async function handleAdd(
         note
     });
     await db.put(`notes:${user}`, JSON.stringify(notes));
-    return ephemeralMessage('Note added.');
+    return ephemeralMessage(`Note added. User now has ${notes.length} notes.`);
 }
 
 /**
@@ -56,15 +56,14 @@ function handleGet(notes: Note[]): InteractionResponse {
     notes.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    return ephemeralMessage(
-        `User has ${notes.length} notes. Here are the last 5:${notes
+    return ephemeralMessage(`User has ${notes.length} notes. Here are the last 5:${
+        notes
             .slice(0, 5)
             .map(
                 ({note, date, author}, index) => `\n${index + 1}. "${note}" by <@${author}> on <t:${Math.floor(new Date(date).getTime() / 1000)}:f>`
             )
             .join('')
-    }`
-);
+    }`);
 }
 
 /**
