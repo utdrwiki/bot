@@ -40,7 +40,11 @@ async function handle(
     }
     return {
         data: {
-            content: container.textContent.trim()
+            content: container.textContent
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean)
+                .join('\n')
         },
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
     };
