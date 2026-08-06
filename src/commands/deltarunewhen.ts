@@ -40,7 +40,7 @@ async function handle(
     }
     return {
         data: {
-            content: container.textContent
+            content: `${String.fromCharCode(8302)}\n${container.textContent
                 .split('\n')
                 .map(line => {
                     const trimmed = line.trim();
@@ -54,7 +54,7 @@ async function handle(
                     return `${trimmed} (${percentage}%)`;
                 })
                 .filter(Boolean)
-                .join('\n')
+                .join('\n')}`
         },
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
     };
