@@ -42,7 +42,17 @@ async function handle(
         data: {
             content: container.textContent
                 .split('\n')
-                .map(line => line.trim())
+                .map(line => {
+                    const trimmed = line.trim();
+                    const done = Array.from(trimmed.matchAll(/▓/gu)).length;
+                    const notDone = Array.from(trimmed.matchAll(/░/gu)).length;
+                    const total = done + notDone;
+                    if (total === 0) {
+                        return trimmed;
+                    }
+                    const percentage = Math.round(done / total * 100);
+                    return `${trimmed} (${percentage}%)`;
+                })
                 .filter(Boolean)
                 .join('\n')
         },
