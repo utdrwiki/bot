@@ -31,7 +31,8 @@
         "post-prod": "tsx scripts/post.ts --prod"
     },
     "dependencies": {
-        "discord-interactions": "4.4.0"
+        "discord-interactions": "4.4.0",
+        "node-html-parser": "9.0.1"
     },
     "devDependencies": {
         "@cloudflare/workers-types": "5.20260804.1",
