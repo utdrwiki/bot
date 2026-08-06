@@ -1,6 +1,6 @@
 'use strict';
-import {InteractionType} from 'discord-interactions';
 import type {InteractionResponse, MemberOrUser} from '../types';
+import {InteractionType} from 'discord-interactions';
 import verify from './verify';
 
 interface ComponentData {

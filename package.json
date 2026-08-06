@@ -24,24 +24,29 @@
         "deploy": "wrangler deploy",
         "start": "wrangler dev",
         "cf-typegen": "wrangler types",
+        "lint": "eslint . --ext .js,.ts",
         "register": "tsx scripts/register.ts",
         "register-prod": "tsx scripts/register.ts --prod",
         "post": "tsx scripts/post.ts",
         "post-prod": "tsx scripts/post.ts --prod"
     },
     "dependencies": {
-        "discord-interactions": "4.1.0"
+        "discord-interactions": "4.4.0"
     },
     "devDependencies": {
-        "@cloudflare/workers-types": "4.20241112.0",
-        "@typescript-eslint/eslint-plugin": "5.61.0",
-        "@typescript-eslint/parser": "5.61.0",
-        "dotenv": "16.4.5",
-        "eslint": "8.44.0",
-        "eslint-plugin-jsdoc": "46.4.3",
-        "eslint-plugin-promise": "6.1.1",
-        "tsx": "4.19.2",
-        "typescript": "5.6.3",
-        "wrangler": "3.87.0"
+        "@cloudflare/workers-types": "5.20260804.1",
+        "@typescript-eslint/eslint-plugin": "8.66.0",
+        "@typescript-eslint/parser": "8.66.0",
+        "dotenv": "17.4.2",
+        "eslint": "8.57.0",
+        "eslint-plugin-jsdoc": "63.3.3",
+        "eslint-plugin-promise": "7.3.0",
+        "tsx": "4.23.9",
+        "typescript": "6.0.2",
+        "wrangler": "4.119.0"
+    },
+    "allowScripts": {
+        "esbuild": false,
+        "workerd": false
     }
 }
