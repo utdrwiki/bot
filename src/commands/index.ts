@@ -5,10 +5,12 @@ import {
     APIApplicationCommandOption,
     APIInteractionResponse,
     ApplicationCommandOptionType,
+    ApplicationCommandType,
     InteractionType
 } from 'discord-api-types/v10';
 import deltarunewhen from './deltarunewhen';
 import notes from './notes';
+import rumiaaskedforthis from './rumiaaskedforthis';
 
 type CommandOption =
     APIApplicationCommandInteractionDataOption<
@@ -28,6 +30,8 @@ interface Command {
         env: Env
     ) => Promise<APIInteractionResponse> | APIInteractionResponse;
     options?: APIApplicationCommandOption[];
+    type?: ApplicationCommandType;
+    permissions?: bigint;
 }
 
 /**
@@ -96,7 +100,8 @@ export function getSubcommand(options?: CommandOption[]): Subcommand {
 
 const commands: Command[] = [
     deltarunewhen,
-    notes
+    notes,
+    rumiaaskedforthis
 ];
 
 export default commands;
