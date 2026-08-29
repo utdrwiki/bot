@@ -1,10 +1,10 @@
 'use strict';
 import {
-    InteractionResponseFlags,
-    InteractionResponseType
-} from 'discord-interactions';
-import {CommandInteraction} from '.';
-import {InteractionResponse} from '../types';
+    APIApplicationCommandInteraction,
+    APIInteractionResponse,
+    InteractionResponseType,
+    MessageFlags
+} from 'discord-api-types/v10';
 import {parse} from 'node-html-parser';
 
 /**
@@ -14,16 +14,16 @@ import {parse} from 'node-html-parser';
  * @returns Response data
  */
 async function handle(
-    _data: CommandInteraction, _env: Env
-): Promise<InteractionResponse> {
+    _data: APIApplicationCommandInteraction, _env: Env
+): Promise<APIInteractionResponse> {
     const response = await fetch('https://deltarune.com/7b/');
     if (!response.ok) {
         return {
             data: {
                 content: 'Error fetching data from deltarune.com :(',
-                flags: InteractionResponseFlags.EPHEMERAL
+                flags: MessageFlags.Ephemeral
             },
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+            type: InteractionResponseType.ChannelMessageWithSource
         };
     }
     const html = await response.text();
@@ -33,9 +33,9 @@ async function handle(
         return {
             data: {
                 content: 'Error parsing data from deltarune.com :(',
-                flags: InteractionResponseFlags.EPHEMERAL
+                flags: MessageFlags.Ephemeral
             },
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+            type: InteractionResponseType.ChannelMessageWithSource
         };
     }
     return {
@@ -56,7 +56,7 @@ async function handle(
                 .filter(Boolean)
                 .join('\n')}`
         },
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+        type: InteractionResponseType.ChannelMessageWithSource
     };
 }
 

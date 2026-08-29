@@ -1,67 +1,33 @@
 'use strict';
 import {
-    CommandOptionType,
-    InteractionResponse,
-    MemberOrUser
-} from '../types';
-import {InteractionType} from 'discord-interactions';
+    APIApplicationCommandInteraction,
+    APIApplicationCommandInteractionDataOption,
+    APIApplicationCommandOption,
+    APIInteractionResponse,
+    ApplicationCommandOptionType,
+    InteractionType
+} from 'discord-api-types/v10';
 import deltarunewhen from './deltarunewhen';
 import notes from './notes';
 
-interface BaseOption {
-    name: string;
-}
+type CommandOption =
+    APIApplicationCommandInteractionDataOption<
+        InteractionType.ApplicationCommand
+    >;
 
-interface IntOption extends BaseOption {
-    type: CommandOptionType.INT_OPTION;
-    value: number;
-}
-
-interface StringOption extends BaseOption {
-    type: CommandOptionType.STRING_OPTION;
-    value: string;
-}
-
-interface UserOption extends BaseOption {
-    type: CommandOptionType.USER_OPTION;
-    value: string;
-}
-
-interface Subcommand extends BaseOption {
-    type: CommandOptionType.SUBCOMMAND;
-    // eslint-disable-next-line no-use-before-define
-    options: CommandOption[];
-}
-
-type CommandOption = IntOption | StringOption | UserOption | Subcommand;
-
-interface CommandData {
-    name: string;
-    options: CommandOption[];
-}
-
-export type CommandInteraction = {
-    type: InteractionType.APPLICATION_COMMAND;
-    data: CommandData;
-    token: string;
-} & MemberOrUser;
-
-interface CommandRegisterOption {
-    name: string;
-    description: string;
-    required?: boolean;
-    options?: CommandRegisterOption[];
-    type: CommandOptionType;
-}
+type Subcommand = Extract<
+    CommandOption,
+    {type: ApplicationCommandOptionType.Subcommand}
+>;
 
 interface Command {
     names: string[];
     description: string;
     handle: (
-        data: CommandInteraction,
+        data: APIApplicationCommandInteraction,
         env: Env
-    ) => Promise<InteractionResponse> | InteractionResponse;
-    options?: CommandRegisterOption[];
+    ) => Promise<APIInteractionResponse> | APIInteractionResponse;
+    options?: APIApplicationCommandOption[];
 }
 
 /**
@@ -73,13 +39,16 @@ interface Command {
  */
 export function getStringOption(
     name: string,
-    options: CommandOption[]
+    options?: CommandOption[]
 ): string {
+    if (!options) {
+        throw new Error(`Missing string option list for "${name}".`);
+    }
     const value = options.find(opt => opt.name === name);
     if (!value) {
         throw new Error(`Missing string option "${name}".`);
     }
-    if (value.type !== CommandOptionType.STRING_OPTION) {
+    if (value.type !== ApplicationCommandOptionType.String) {
         throw new Error(`Expected string option "${name}".`);
     }
     return value.value;
@@ -92,15 +61,15 @@ export function getStringOption(
  * @returns Option value
  * @throws {Error} If the option is missing or not a string
  */
-export function getUserOption(
-    name: string,
-    options: CommandOption[]
-): string {
+export function getUserOption(name: string, options?: CommandOption[]): string {
+    if (!options) {
+        throw new Error(`Missing user option list for "${name}".`);
+    }
     const value = options.find(opt => opt.name === name);
     if (!value) {
         throw new Error(`Missing user option "${name}".`);
     }
-    if (value.type !== CommandOptionType.USER_OPTION) {
+    if (value.type !== ApplicationCommandOptionType.User) {
         throw new Error(`Expected user option "${name}".`);
     }
     return value.value;
@@ -112,9 +81,13 @@ export function getUserOption(
  * @returns Subcommand and its data
  * @throws {Error} If the subcommand is missing
  */
-export function getSubcommand(options: CommandOption[]): Subcommand {
-    const subcommand = options
-        .find(({type}) => type === CommandOptionType.SUBCOMMAND);
+export function getSubcommand(options?: CommandOption[]): Subcommand {
+    if (!options) {
+        throw new Error('Missing subcommand list.');
+    }
+    const subcommand = options.find(
+        ({type}) => type === ApplicationCommandOptionType.Subcommand
+    );
     if (!subcommand) {
         throw new Error('Missing subcommand.');
     }

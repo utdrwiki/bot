@@ -10,7 +10,7 @@ The bot can be configured for local development using either a `.dev.vars` file 
 - `BOT_PUBLIC_KEY`: Discord application's public key (for command verification)
 - `VERIFY_GUILD`: ID of the server used for wiki account verification
 - `VERIFY_ROLE`: ID of the role given to users who verify their wiki account
-- `VERIFY_WEBHOOK`: Webhook URL of the webhook which posts whenever a user successfully verifies their wiki account
+- `VERIFY_USERNAME_CHANNEL`: ID of the channel where the bot should post whenever a user successfully verifies their wiki account
 - `VERIFY_CHANNEL`: ID of the channel where the bot should post a message with the verification button
 - `VERIFY_MESSAGE`: ID of the message which the bot should edit instead of posting anew
 - `OAUTH_CLIENT_ID`: Client ID of the OAuth application on the wiki used for account verification

@@ -1,25 +1,26 @@
 'use strict';
-import {ButtonStyleTypes, MessageComponentTypes} from 'discord-interactions';
+import {ButtonStyle, ComponentType, Routes} from 'discord-api-types/v10';
+import {REST} from '@discordjs/rest';
 import {config} from 'dotenv';
 
 /**
  * Checks if a message exists in a channel.
  * @param channelId ID of the channel
  * @param messageId ID of the message
- * @param token Bot token
+ * @param rest REST client
  * @returns Whether the message exists
  */
 async function messageExists(
     channelId: string,
     messageId: string,
-    token: string
+    rest: REST
 ) {
-    const response = await fetch(`https://discord.com/api/channels/${channelId}/messages/${messageId}`, {
-        headers: {
-            Authorization: `Bot ${token}`
-        }
-    });
-    return response.ok;
+    try {
+        await rest.get(Routes.channelMessage(channelId, messageId));
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 /**
@@ -37,10 +38,10 @@ async function main() {
                 // eslint-disable-next-line camelcase
                 custom_id: 'verify',
                 label: 'Verify',
-                style: ButtonStyleTypes.SUCCESS,
-                type: MessageComponentTypes.BUTTON
+                style: ButtonStyle.Success,
+                type: ComponentType.Button
             }],
-            type: MessageComponentTypes.ACTION_ROW
+            type: ComponentType.ActionRow
         }],
         // eslint-disable-next-line max-len
         content: '# Wiki account verification\nYou can get the Verified role by verifying your Undertale/Deltarune Wiki account! Click the button below to start verification, it should only take a minute or two.'
@@ -48,24 +49,15 @@ async function main() {
     const channelId = vars.parsed.VERIFY_CHANNEL;
     const messageId = vars.parsed.VERIFY_MESSAGE;
     const token = vars.parsed.BOT_TOKEN;
-    const headers = {
-        'Authorization': `Bot ${token}`,
-        'Content-Type': 'application/json'
-    };
-    const response = await messageExists(channelId, messageId, token) ?
-        await fetch(`https://discord.com/api/channels/${channelId}/messages/${messageId}`, {
-            body: JSON.stringify(messageContent),
-            headers,
-            method: 'PATCH'
-        }) :
-        await fetch(`https://discord.com/api/channels/${channelId}/messages`, {
-            body: JSON.stringify(messageContent),
-            headers,
-            method: 'POST'
+    const rest = new REST({version: '10'}).setToken(token);
+    if (await messageExists(channelId, messageId, rest)) {
+        await rest.patch(Routes.channelMessage(channelId, messageId), {
+            body: messageContent
         });
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Failed to post/edit message: ${text}`);
+    } else {
+        await rest.post(Routes.channelMessages(channelId), {
+            body: messageContent
+        });
     }
 }
 

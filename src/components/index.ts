@@ -1,21 +1,14 @@
 'use strict';
-import type {InteractionResponse, MemberOrUser} from '../types';
-import {InteractionType} from 'discord-interactions';
+import {
+    APIInteractionResponse,
+    APIMessageComponentInteraction
+} from 'discord-api-types/v10';
 import verify from './verify';
 
-interface ComponentData {
-    custom_id: string;
-}
-
-export type ComponentInteraction = {
-    type: InteractionType.MESSAGE_COMPONENT;
-    data: ComponentData;
-    token: string;
-} & MemberOrUser;
-
-type ComponentHandler = (data: ComponentInteraction, env: Env) =>
-    Promise<InteractionResponse> |
-    InteractionResponse;
+type ComponentHandler = (
+    data: APIMessageComponentInteraction,
+    env: Env
+) => Promise<APIInteractionResponse> | APIInteractionResponse;
 
 const handlers: Record<string, ComponentHandler | undefined> = {
     verify

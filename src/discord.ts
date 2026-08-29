@@ -1,20 +1,34 @@
 'use strict';
 import {
-    InteractionResponse,
-    PingInteraction
-} from './types';
-import {
+    APIApplicationCommandInteraction,
+    APIInteraction,
+    APIInteractionResponse,
+    APIMessageComponentInteraction,
+    APIUser,
     InteractionResponseType,
     InteractionType,
-    verifyKey
-} from 'discord-interactions';
-import commands, {CommandInteraction} from './commands';
-import components, {ComponentInteraction} from './components';
+    MessageFlags,
+    RESTPostAPIChannelMessageJSONBody,
+    Routes
+} from 'discord-api-types/v10';
+import {REST} from '@discordjs/rest';
+import commands from './commands';
+import components from './components';
+import {verifyKey} from 'discord-interactions';
 
-export type Interaction =
-    PingInteraction |
-    CommandInteraction |
-    ComponentInteraction;
+let rest: REST | null = null;
+
+/**
+ * Gets a REST client for Discord API requests.
+ * @param token Bot token
+ * @returns REST client
+ */
+function getRest(token: string) {
+    if (!rest) {
+        rest = new REST({version: '10'}).setToken(token);
+    }
+    return rest;
+}
 
 /**
  * Handles a command interaction from Discord.
@@ -23,7 +37,7 @@ export type Interaction =
  * @returns Response data
  */
 async function handleCommand(
-    data: CommandInteraction,
+    data: APIApplicationCommandInteraction,
     env: Env
 ): Promise<Response> {
     const command = commands.find(cmd => cmd.names.includes(data.data.name));
@@ -46,7 +60,7 @@ async function handleCommand(
  * @returns Response data
  */
 async function handleComponent(
-    data: ComponentInteraction,
+    data: APIMessageComponentInteraction,
     env: Env
 ): Promise<Response> {
     const component = components[data.data.custom_id];
@@ -72,7 +86,7 @@ export async function handleInteraction(
     request: Request,
     env: Env
 ): Promise<Response> {
-    const body: Interaction = await request.json();
+    const body: APIInteraction = await request.json();
     if (!await verifyKey(
         JSON.stringify(body),
         request.headers.get('X-Signature-Ed25519') || '',
@@ -82,20 +96,41 @@ export async function handleInteraction(
         return new Response('Invalid request signature', {status: 401});
     }
     switch (body.type) {
-        case InteractionType.PING:
+        case InteractionType.Ping:
             return new Response(JSON.stringify({type: 1}), {
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 status: 200
             });
-        case InteractionType.APPLICATION_COMMAND:
+        case InteractionType.ApplicationCommand:
             return handleCommand(body, env);
-        case InteractionType.MESSAGE_COMPONENT:
+        case InteractionType.MessageComponent:
             return handleComponent(body, env);
         default:
             return new Response(null, {status: 400});
     }
+}
+
+/**
+ * Retrieves a user from interaction data.
+ * @param mou Interaction data with a member or user property
+ * @param mou.member The member object, if it exists
+ * @param mou.member.user The user object within the member
+ * @param mou.user The user object, if it exists
+ * @returns The user
+ * @throws {Error} If neither member nor user is present
+ */
+export function getUser(
+    mou: { member?: { user: APIUser }; user?: APIUser }
+): APIUser {
+    if (mou.member) {
+        return mou.member.user;
+    }
+    if (mou.user) {
+        return mou.user;
+    }
+    throw new Error('Missing user in interaction payload.');
 }
 
 /**
@@ -111,13 +146,21 @@ export async function addRole(
     roleId: string,
     token: string
 ) {
-    await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}/roles/${roleId}`, {
-        headers: {
-            'Authorization': `Bot ${token}`,
-            'Content-Type': 'application/json'
-        },
-        method: 'PUT'
-    });
+    await getRest(token).put(Routes.guildMemberRole(guildId, userId, roleId));
+}
+
+/**
+ * Sends a message to a Discord channel.
+ * @param channelId ID of the channel to send the message to
+ * @param body Message content
+ * @param token Bot token
+ */
+export async function sendMessage(
+    channelId: string,
+    body: RESTPostAPIChannelMessageJSONBody,
+    token: string
+) {
+    await getRest(token).post(Routes.channelMessages(channelId), {body});
 }
 
 /**
@@ -125,12 +168,14 @@ export async function addRole(
  * @param content Message content
  * @returns Interaction response
  */
-export function ephemeralMessage(content: string): InteractionResponse {
+export function ephemeralMessage(
+    content: string
+): APIInteractionResponse {
     return {
         data: {
             content,
-            flags: 64
+            flags: MessageFlags.Ephemeral
         },
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+        type: InteractionResponseType.ChannelMessageWithSource
     };
 }

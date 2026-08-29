@@ -1,12 +1,13 @@
 'use strict';
 import {
-    ButtonStyleTypes,
+    APIInteractionResponse,
+    APIMessageComponentInteraction,
+    ButtonStyle,
+    ComponentType,
     InteractionResponseType,
-    MessageComponentTypes
-} from 'discord-interactions';
-import {InteractionResponse, getUser} from '../types';
-import {addRole, ephemeralMessage} from '../discord';
-import {ComponentInteraction} from '.';
+    MessageFlags
+} from 'discord-api-types/v10';
+import {addRole, ephemeralMessage, getUser} from '../discord';
 import {generateToken} from '../crypto';
 
 /**
@@ -16,9 +17,9 @@ import {generateToken} from '../crypto';
  * @returns Response data
  */
 async function handle(
-    data: ComponentInteraction,
+    data: APIMessageComponentInteraction,
     env: Env
-): Promise<InteractionResponse> {
+): Promise<APIInteractionResponse> {
     const user = getUser(data);
     const storedWikiId = await env.KV.get(`discord:${user.id}`);
     if (storedWikiId) {
@@ -48,18 +49,18 @@ async function handle(
                     {
                         // eslint-disable-next-line camelcase
                         label: 'Verify wiki account',
-                        style: ButtonStyleTypes.LINK,
-                        type: MessageComponentTypes.BUTTON,
+                        style: ButtonStyle.Link,
+                        type: ComponentType.Button,
                         url: verificationUrl
                     }
                 ],
-                type: MessageComponentTypes.ACTION_ROW
+                type: ComponentType.ActionRow
             }],
             // eslint-disable-next-line max-len
             content: '**To continue verification, please visit the button link below!** You will have to log into your wiki account, then confirm you are trying to verify your Discord account.',
-            flags: 64
+            flags: MessageFlags.Ephemeral
         },
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+        type: InteractionResponseType.ChannelMessageWithSource
     };
 }
 

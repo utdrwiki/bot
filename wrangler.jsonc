@@ -29,7 +29,7 @@
             "SECRET_KEY",
             "VERIFY_GUILD",
             "VERIFY_ROLE",
-            "VERIFY_WEBHOOK",
+            "VERIFY_USERNAME_CHANNEL",
             "WIKI_REST_API",
             "ZEPTOMAIL_AUTH"
         ]

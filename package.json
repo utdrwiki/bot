@@ -32,6 +32,8 @@
         "typecheck": "tsc --noEmit -p ."
     },
     "dependencies": {
+        "@discordjs/rest": "2.6.3",
+        "discord-api-types": "0.38.47",
         "discord-interactions": "4.4.0",
         "node-html-parser": "9.0.1"
     },

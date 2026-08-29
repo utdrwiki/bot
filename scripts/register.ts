@@ -1,4 +1,5 @@
 'use strict';
+import {REST} from '@discordjs/rest';
 import commands from '../src/commands';
 import {config} from 'dotenv';
 
@@ -11,24 +12,16 @@ async function main() {
     if (!vars.parsed) {
         throw new Error('Failed to load environment variables from .dev.vars.');
     }
-    const body = commands.flatMap(command => command.names.map(name => ({
-        description: command.description,
-        name,
-        options: command.options,
-        type: 1
-    })));
-    const response = await fetch(`https://discord.com/api/applications/${vars.parsed.APP_ID}/commands`, {
-        body: JSON.stringify(body),
-        headers: {
-            'Authorization': `Bot ${vars.parsed.BOT_TOKEN}`,
-            'Content-Type': 'application/json'
-        },
-        method: 'PUT'
-    });
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Failed to register commands: ${text}`);
-    }
+    await new REST({version: '10'})
+        .setToken(vars.parsed.BOT_TOKEN)
+        .put(`/applications/${vars.parsed.APP_ID}/commands`, {
+            body: commands.flatMap(command => command.names.map(name => ({
+                description: command.description,
+                name,
+                options: command.options,
+                type: 1
+            })))
+        });
 }
 
 main();

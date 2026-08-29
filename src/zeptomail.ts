@@ -1,4 +1,5 @@
 'use strict';
+import {sendMessage} from './discord';
 
 const ACCEPTABLE_TIME_DIFF = 5 * 60 * 1000;
 
@@ -64,16 +65,9 @@ export async function handleZeptomail(
         return new Response(null, {status: 400});
     }
     if (JSON.parse(body).event_name.includes('hardbounce')) {
-        await fetch(`https://discord.com/api/channels/${env.NOTIFICATION_CHANNEL}/messages`, {
-            body: JSON.stringify({
-                content: 'Received a hard bounce. Check Zeptomail for details.'
-            }),
-            headers: {
-                'Authorization': `Bot ${env.BOT_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            method: 'POST'
-        });
+        await sendMessage(env.NOTIFICATION_CHANNEL, {
+            content: 'Received a hard bounce. Check Zeptomail for details.'
+        }, env.BOT_TOKEN);
     }
     return new Response(null, {status: 204});
 }

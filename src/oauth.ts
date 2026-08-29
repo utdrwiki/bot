@@ -1,6 +1,6 @@
 'use strict';
 
-import {addRole} from './discord';
+import {addRole, sendMessage} from './discord';
 import {verifyToken} from './crypto';
 
 interface OAuthUserInfo {
@@ -78,28 +78,6 @@ async function getUserInfo(
 }
 
 /**
- * Posts in the verification log that a user successfully verified.
- * @param webhookUrl Webhook URL of the verification log
- * @param discordUserId Discord user ID
- * @param wikiUsername Wiki username
- */
-async function postUsernameToWebhook(
-    webhookUrl: string,
-    discordUserId: string,
-    wikiUsername: string
-): Promise<void> {
-    await fetch(webhookUrl, {
-        body: JSON.stringify({
-            content: `<@${discordUserId}> - [${wikiUsername}](<https://undertale.wiki/User:${encodeURIComponent(wikiUsername)}>)`
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        method: 'POST'
-    });
-}
-
-/**
  * Handles the OAuth2 callback after a user allows verification.
  * @param request Request data
  * @param env Environment variables
@@ -128,11 +106,11 @@ export async function handleOAuth(
             throw new Error('Your account is blocked on the wiki.');
         }
         await env.KV.put(`discord:${discordUserId}`, String(wikiUserInfo.sub));
-        await postUsernameToWebhook(
-            env.VERIFY_WEBHOOK,
-            discordUserId,
-            wikiUserInfo.username
-        );
+        await sendMessage(env.VERIFY_USERNAME_CHANNEL, {
+            // eslint-disable-next-line camelcase
+            allowed_mentions: {parse: []},
+            content: `<@${discordUserId}> - [${wikiUserInfo.username}](<https://undertale.wiki/User:${encodeURIComponent(wikiUserInfo.username)}>)`
+        }, env.BOT_TOKEN);
         await addRole(
             discordUserId,
             env.VERIFY_GUILD,

@@ -1,17 +1,19 @@
 'use strict';
 import {
-    CommandInteraction,
+    APIApplicationCommandInteraction,
+    APIInteractionResponse,
+    APIUser,
+    ApplicationCommandOptionType
+} from 'discord-api-types/v10';
+import {
+    ephemeralMessage,
+    getUser
+} from '../discord';
+import {
     getStringOption,
     getSubcommand,
     getUserOption
 } from '.';
-import {
-    CommandOptionType,
-    InteractionResponse,
-    User,
-    getUser
-} from '../types';
-import {ephemeralMessage} from '../discord';
 
 interface Note {
     date: string;
@@ -30,11 +32,11 @@ interface Note {
  */
 async function handleAdd(
     user: string,
-    author: User,
+    author: APIUser,
     notes: Note[],
     note: string,
     db: KVNamespace<string>
-): Promise<InteractionResponse> {
+): Promise<APIInteractionResponse> {
     notes.push({
         author: author.id,
         date: new Date().toISOString(),
@@ -49,7 +51,7 @@ async function handleAdd(
  * @param notes List of notes
  * @returns Response data
  */
-function handleGet(notes: Note[]): InteractionResponse {
+function handleGet(notes: Note[]): APIInteractionResponse {
     if (notes.length === 0) {
         return ephemeralMessage('User has no notes.');
     }
@@ -73,9 +75,12 @@ function handleGet(notes: Note[]): InteractionResponse {
  * @returns Response data
  */
 async function handle(
-    data: CommandInteraction,
+    data: APIApplicationCommandInteraction,
     env: Env
-): Promise<InteractionResponse> {
+): Promise<APIInteractionResponse> {
+    if (!('options' in data.data)) {
+        throw new Error('No options provided.');
+    }
     const subcommand = getSubcommand(data.data.options);
     const user = getUserOption('user', subcommand.options);
     const author = getUser(data);
@@ -110,16 +115,16 @@ export default {
                     description: 'User to add a note to.',
                     name: 'user',
                     required: true,
-                    type: CommandOptionType.USER_OPTION
+                    type: ApplicationCommandOptionType.User
                 },
                 {
                     description: 'Note to add.',
                     name: 'note',
                     required: true,
-                    type: CommandOptionType.STRING_OPTION
+                    type: ApplicationCommandOptionType.String
                 }
             ],
-            type: CommandOptionType.SUBCOMMAND
+            type: ApplicationCommandOptionType.Subcommand
         },
         {
             description: 'Check notes of this user.',
@@ -129,10 +134,10 @@ export default {
                     description: 'User to check notes of.',
                     name: 'user',
                     required: true,
-                    type: CommandOptionType.USER_OPTION
+                    type: ApplicationCommandOptionType.User
                 }
             ],
-            type: CommandOptionType.SUBCOMMAND
+            type: ApplicationCommandOptionType.Subcommand
         }
     ]
 };
