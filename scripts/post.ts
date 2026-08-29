@@ -1,5 +1,10 @@
 'use strict';
-import {ButtonStyle, ComponentType, Routes} from 'discord-api-types/v10';
+import {
+    ButtonStyle,
+    ComponentType,
+    RESTPostAPIChannelMessageJSONBody,
+    Routes
+} from 'discord-api-types/v10';
 import {REST} from '@discordjs/rest';
 import {config} from 'dotenv';
 
@@ -32,7 +37,7 @@ async function main() {
     if (!vars.parsed) {
         throw new Error('Failed to load environment variables from .dev.vars.');
     }
-    const messageContent = {
+    const body: RESTPostAPIChannelMessageJSONBody = {
         components: [{
             components: [{
                 // eslint-disable-next-line camelcase
@@ -51,13 +56,9 @@ async function main() {
     const token = vars.parsed.BOT_TOKEN;
     const rest = new REST({version: '10'}).setToken(token);
     if (await messageExists(channelId, messageId, rest)) {
-        await rest.patch(Routes.channelMessage(channelId, messageId), {
-            body: messageContent
-        });
+        await rest.patch(Routes.channelMessage(channelId, messageId), {body});
     } else {
-        await rest.post(Routes.channelMessages(channelId), {
-            body: messageContent
-        });
+        await rest.post(Routes.channelMessages(channelId), {body});
     }
 }
 

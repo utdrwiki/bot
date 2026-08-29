@@ -1,4 +1,8 @@
 'use strict';
+import {
+    ApplicationCommandType,
+    InteractionContextType
+} from 'discord-api-types/v10';
 import {REST} from '@discordjs/rest';
 import commands from '../src/commands';
 import {config} from 'dotenv';
@@ -16,10 +20,13 @@ async function main() {
         .setToken(vars.parsed.BOT_TOKEN)
         .put(`/applications/${vars.parsed.APP_ID}/commands`, {
             body: commands.flatMap(command => command.names.map(name => ({
+                contexts: [InteractionContextType.Guild],
+                // eslint-disable-next-line camelcase
+                default_member_permissions: command.permissions?.toString(),
                 description: command.description,
                 name,
                 options: command.options,
-                type: 1
+                type: command.type ?? ApplicationCommandType.ChatInput
             })))
         });
 }

@@ -3,7 +3,8 @@ import {
     APIApplicationCommandInteraction,
     APIInteractionResponse,
     APIUser,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } from 'discord-api-types/v10';
 import {
     ephemeralMessage,
@@ -139,5 +140,6 @@ export default {
             ],
             type: ApplicationCommandOptionType.Subcommand
         }
-    ]
+    ],
+    permissions: PermissionFlagsBits.ManageMessages
 };
