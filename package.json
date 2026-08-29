@@ -28,7 +28,8 @@
         "register": "tsx scripts/register.ts",
         "register-prod": "tsx scripts/register.ts --prod",
         "post": "tsx scripts/post.ts",
-        "post-prod": "tsx scripts/post.ts --prod"
+        "post-prod": "tsx scripts/post.ts --prod",
+        "typecheck": "tsc --noEmit -p ."
     },
     "dependencies": {
         "discord-interactions": "4.4.0",
