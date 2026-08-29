@@ -96,6 +96,10 @@ export async function handleOAuth(
             throw new Error('Request does not contain an OAuth2 code or state. If this is because you rejected authorization, you can leave the page.');
         }
         const discordUserId = await verifyToken(token, env.SECRET_KEY);
+        const kvKey = `discord:${discordUserId}`;
+        if (await env.KV.get(kvKey)) {
+            return new Response('You have already verified!');
+        }
         const accessToken = await getAccessToken(code, env);
         const wikiUserInfo = await getUserInfo(accessToken, env);
         if (!wikiUserInfo.groups.includes('user')) {
@@ -105,7 +109,7 @@ export async function handleOAuth(
         if (wikiUserInfo.blocked) {
             throw new Error('Your account is blocked on the wiki.');
         }
-        await env.KV.put(`discord:${discordUserId}`, String(wikiUserInfo.sub));
+        await env.KV.put(kvKey, String(wikiUserInfo.sub));
         await sendMessage(env.VERIFY_USERNAME_CHANNEL, {
             // eslint-disable-next-line camelcase
             allowed_mentions: {parse: []},
