@@ -1,0 +1,37 @@
+{
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "bot",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-08-29",
+    "send_metrics": false,
+    "workers_dev": false,
+    "preview_urls": false,
+    "observability": {
+        "enabled": true
+    },
+    "vars": {
+        "DISCORD_INVITE": "https://discord.gg/tFgFwCFndp"
+    },
+    "kv_namespaces": [
+        {
+            "binding": "KV",
+            "id": "52639a1752f2474b9b86e74ba07a06cc"
+        }
+    ],
+    "secrets": {
+        "required": [
+            "APP_ID",
+            "BOT_PUBLIC_KEY",
+            "BOT_TOKEN",
+            "NOTIFICATION_CHANNEL",
+            "OAUTH_CLIENT_ID",
+            "OAUTH_CLIENT_SECRET",
+            "SECRET_KEY",
+            "VERIFY_GUILD",
+            "VERIFY_ROLE",
+            "VERIFY_WEBHOOK",
+            "WIKI_REST_API",
+            "ZEPTOMAIL_AUTH"
+        ]
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "name": "utw-bot",
+    "name": "bot",
     "version": "1.0.0",
     "private": true,
     "description": "A Discord bot for the Undertale/Deltarune Wiki server, made through Cloudflare Workers.",
@@ -35,7 +35,7 @@
         "node-html-parser": "9.0.1"
     },
     "devDependencies": {
-        "@cloudflare/workers-types": "5.20260804.1",
+        "@types/node": "26.4.0",
         "@typescript-eslint/eslint-plugin": "8.66.0",
         "@typescript-eslint/parser": "8.66.0",
         "dotenv": "17.4.2",
@@ -44,7 +44,7 @@
         "eslint-plugin-promise": "7.3.0",
         "tsx": "4.23.9",
         "typescript": "6.0.2",
-        "wrangler": "4.119.0"
+        "wrangler": "4.127.1"
     },
     "allowScripts": {
         "esbuild": false,

@@ -20,7 +20,7 @@ async function handle(
     env: Env
 ): Promise<InteractionResponse> {
     const user = getUser(data);
-    const storedWikiId = await env.UTW_BOT.get(`discord:${user.id}`);
+    const storedWikiId = await env.KV.get(`discord:${user.id}`);
     if (storedWikiId) {
         try {
             await addRole(

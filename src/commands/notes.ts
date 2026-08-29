@@ -79,7 +79,7 @@ async function handle(
     const subcommand = getSubcommand(data.data.options);
     const user = getUserOption('user', subcommand.options);
     const author = getUser(data);
-    const notesDB = await env.UTW_BOT.get(`notes:${user}`);
+    const notesDB = await env.KV.get(`notes:${user}`);
     const notes: Note[] = notesDB ? JSON.parse(notesDB) : [];
     switch (subcommand.name) {
         case 'add':
@@ -88,7 +88,7 @@ async function handle(
                 author,
                 notes,
                 getStringOption('note', subcommand.options),
-                env.UTW_BOT
+                env.KV
             );
         case 'get':
             return handleGet(notes);

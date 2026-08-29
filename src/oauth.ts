@@ -127,7 +127,7 @@ export async function handleOAuth(
         if (wikiUserInfo.blocked) {
             throw new Error('Your account is blocked on the wiki.');
         }
-        await env.UTW_BOT.put(`discord:${discordUserId}`, String(wikiUserInfo.sub));
+        await env.KV.put(`discord:${discordUserId}`, String(wikiUserInfo.sub));
         await postUsernameToWebhook(
             env.VERIFY_WEBHOOK,
             discordUserId,
