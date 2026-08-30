@@ -2,31 +2,12 @@
 import {
     ButtonStyle,
     ComponentType,
+    RESTJSONErrorCodes,
     RESTPostAPIChannelMessageJSONBody,
     Routes
 } from 'discord-api-types/v10';
-import {REST} from '@discordjs/rest';
+import {DiscordAPIError, REST} from '@discordjs/rest';
 import {config} from 'dotenv';
-
-/**
- * Checks if a message exists in a channel.
- * @param channelId ID of the channel
- * @param messageId ID of the message
- * @param rest REST client
- * @returns Whether the message exists
- */
-async function messageExists(
-    channelId: string,
-    messageId: string,
-    rest: REST
-) {
-    try {
-        await rest.get(Routes.channelMessage(channelId, messageId));
-        return true;
-    } catch {
-        return false;
-    }
-}
 
 /**
  * Posts the message with the button in the verification channel.
@@ -52,13 +33,20 @@ async function main() {
         content: '# Wiki account verification\nYou can get the Verified role by verifying your Undertale/Deltarune Wiki account! Click the button below to start verification, it should only take a minute or two.'
     };
     const channelId = vars.parsed.VERIFY_CHANNEL;
-    const messageId = vars.parsed.VERIFY_MESSAGE;
+    const messageId = vars.parsed.VERIFY_MESSAGE ?? '0';
     const token = vars.parsed.BOT_TOKEN;
     const rest = new REST({version: '10'}).setToken(token);
-    if (await messageExists(channelId, messageId, rest)) {
+    try {
         await rest.patch(Routes.channelMessage(channelId, messageId), {body});
-    } else {
-        await rest.post(Routes.channelMessages(channelId), {body});
+    } catch (e) {
+        if (
+            e instanceof DiscordAPIError &&
+            e.code === RESTJSONErrorCodes.UnknownMessage
+        ) {
+            await rest.post(Routes.channelMessages(channelId), {body});
+        } else {
+            throw e;
+        }
     }
 }
 

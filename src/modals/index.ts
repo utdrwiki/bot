@@ -1,19 +1,19 @@
 'use strict';
 import {
     APIInteractionResponse,
-    APIMessageComponentInteraction
+    APIModalSubmitInteraction
 } from 'discord-api-types/v10';
-import talktostaffbutton from './talktostaffbutton';
-import verify from './verify';
+import talktostaffmodal from './talktostaffmodal';
+import talktousermodal from './talktousermodal';
 
 type ComponentHandler = (
-    data: APIMessageComponentInteraction,
+    data: APIModalSubmitInteraction,
     env: Env
 ) => Promise<APIInteractionResponse> | APIInteractionResponse;
 
 const handlers: Record<string, ComponentHandler | undefined> = {
-    talktostaffbutton,
-    verify
+    talktostaffmodal,
+    talktousermodal
 };
 
 export default handlers;

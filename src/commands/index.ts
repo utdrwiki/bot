@@ -11,6 +11,8 @@ import {
 import deltarunewhen from './deltarunewhen';
 import notes from './notes';
 import rumiaaskedforthis from './rumiaaskedforthis';
+import talktostaff from './talktostaff';
+import talktouser from './talktouser';
 
 type CommandOption =
     APIApplicationCommandInteractionDataOption<
@@ -59,11 +61,35 @@ export function getStringOption(
 }
 
 /**
+ * Retrieves a boolean option from a command's options.
+ * @param name Option name
+ * @param options Command options
+ * @returns Option value
+ * @throws {Error} If the option is missing or not a boolean
+ */
+export function getBoolOption(
+    name: string,
+    options?: CommandOption[]
+): boolean {
+    if (!options) {
+        throw new Error(`Missing boolean option list for "${name}".`);
+    }
+    const value = options.find(opt => opt.name === name);
+    if (!value) {
+        throw new Error(`Missing boolean option "${name}".`);
+    }
+    if (value.type !== ApplicationCommandOptionType.Boolean) {
+        throw new Error(`Expected boolean option "${name}".`);
+    }
+    return value.value;
+}
+
+/**
  * Retrieves a user option from a command's options.
  * @param name Option name
  * @param options Command options
  * @returns Option value
- * @throws {Error} If the option is missing or not a string
+ * @throws {Error} If the option is missing or not a user
  */
 export function getUserOption(name: string, options?: CommandOption[]): string {
     if (!options) {
@@ -101,7 +127,9 @@ export function getSubcommand(options?: CommandOption[]): Subcommand {
 const commands: Command[] = [
     deltarunewhen,
     notes,
-    rumiaaskedforthis
+    rumiaaskedforthis,
+    talktostaff,
+    talktouser
 ];
 
 export default commands;

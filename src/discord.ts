@@ -4,7 +4,10 @@ import {
     APIInteraction,
     APIInteractionResponse,
     APIMessageComponentInteraction,
+    APIModalSubmitInteraction,
+    APIPrivateThreadChannel,
     APIUser,
+    ChannelType,
     InteractionResponseType,
     InteractionType,
     MessageFlags,
@@ -14,6 +17,7 @@ import {
 import {REST} from '@discordjs/rest';
 import commands from './commands';
 import components from './components';
+import modals from './modals';
 import {verifyKey} from 'discord-interactions';
 
 let rest: REST | null = null;
@@ -77,6 +81,29 @@ async function handleComponent(
 }
 
 /**
+ * Handles a modal submit interaction from Discord.
+ * @param data Data associated with the modal submit interaction
+ * @param env Environment data
+ * @returns Response data
+ */
+async function handleModal(
+    data: APIModalSubmitInteraction,
+    env: Env
+): Promise<Response> {
+    const modal = modals[data.data.custom_id];
+    if (!modal) {
+        return new Response('Nonexistent modal.', {status: 400});
+    }
+    const response = await modal(data, env);
+    return new Response(JSON.stringify(response), {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        status: 200
+    });
+}
+
+/**
  * Handles an interaction request from Discord.
  * @param request Request data
  * @param env Environment data
@@ -107,6 +134,8 @@ export async function handleInteraction(
             return handleCommand(body, env);
         case InteractionType.MessageComponent:
             return handleComponent(body, env);
+        case InteractionType.ModalSubmit:
+            return handleModal(body, env);
         default:
             return new Response(null, {status: 400});
     }
@@ -159,8 +188,33 @@ export async function sendMessage(
     channelId: string,
     body: RESTPostAPIChannelMessageJSONBody,
     token: string
-) {
+): Promise<void> {
     await getRest(token).post(Routes.channelMessages(channelId), {body});
+}
+
+/**
+ * Creates a private thread in a Discord channel.
+ * @param channelId ID of the channel to create the thread in
+ * @param name Name of the thread
+ * @param token Bot token
+ * @returns Promise that resolves when the thread is created
+ * @throws {Error} If the thread creation fails
+ */
+export function createPrivateThread(
+    channelId: string,
+    name: string,
+    token: string
+): Promise<APIPrivateThreadChannel> {
+    return getRest(token)
+        .post(Routes.threads(channelId), {
+            body: {
+                // eslint-disable-next-line camelcase
+                auto_archive_duration: 10080,
+                invitable: false,
+                name,
+                type: ChannelType.PrivateThread
+            }
+        }) as Promise<APIPrivateThreadChannel>;
 }
 
 /**

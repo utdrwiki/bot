@@ -12,11 +12,15 @@ The bot can be configured for local development using either a `.dev.vars` file 
 - `VERIFY_ROLE`: ID of the role given to users who verify their wiki account
 - `VERIFY_USERNAME_CHANNEL`: ID of the channel where the bot should post whenever a user successfully verifies their wiki account
 - `VERIFY_CHANNEL`: ID of the channel where the bot should post a message with the verification button
-- `VERIFY_MESSAGE`: ID of the message which the bot should edit instead of posting anew
+- `VERIFY_MESSAGE`: ID of the message in the verification channel which the bot should edit instead of posting anew
 - `OAUTH_CLIENT_ID`: Client ID of the OAuth application on the wiki used for account verification
 - `OAUTH_CLIENT_SECRET`: Client secret of the OAuth application on the wiki used for account verification
 - `SECRET_KEY`: Randomly generated string used for generating verification state
 - `WIKI_REST_API`: URL to the rest.php endpoint of the target wiki for verification
+- `TALKTOSTAFF_GROUPS`: Object containing `server`, `utwiki` and `drwiki` keys mapping to role IDs of respective wiki groups
+- `TALKTOSTAFF_CHANNEL`: Channel to create private threads for private user-to-staff conversations
+- `TALKTOSTAFF_MUTE_ROLE`: Role to give a user if a staff member decides to mute them
+- `TALKTOSTAFF_MESSAGE`: ID of the message in the talk-to-staff channel which the bot should edit instead of posting anew
 - `ZEPTOMAIL_AUTH`: Secret received from Zeptomail to verify their webhook requests
 - `NOTIFICATION_CHANNEL`: Channel ID of the channel where Zeptomail bounces should be sent
 
@@ -24,11 +28,11 @@ The bot can be configured for local development using either a `.dev.vars` file 
 
 These scripts can be run through `npm run`:
 
-- `npm start`: Starts a development server at `localhost:8787`
-    - You might want to install ngrok and run `ngrok http 8787` to obtain a public IP, then set your public URL as the interaction endpoint in your Discord application
+- `npm start`: Starts a development server. You can open a Cloudflare tunnel using `t` to obtain a public URL to your bot instance, then set it as the interaction endpoint in your Discord application
 - `npm run deploy`: Deploys the current code to Cloudflare Workers (production)
 - `npm run cf-typegen`: Regenerates types in `worker-configuration.d.ts`
 - `npm run register[-prod]`: Registers Discord bot commands so they can be used
-- `npm run post[-prod]`: Posts a message with a verification button
+- `npm run post-talktostaff[-prod]`: Posts a message with a "talk to staff" button
+- `npm run post-verify[-prod]`: Posts a message with a verification button
 
 Scripts with a `-prod` suffix use the `.env` file for their configuration, whereas the others use the `.dev.vars` file.

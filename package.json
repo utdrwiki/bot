@@ -27,8 +27,10 @@
         "lint": "eslint . --ext .js,.ts",
         "register": "tsx scripts/register.ts",
         "register-prod": "tsx scripts/register.ts --prod",
-        "post": "tsx scripts/post.ts",
-        "post-prod": "tsx scripts/post.ts --prod",
+        "post-talktostaff": "tsx scripts/post-talktostaff.ts",
+        "post-verify": "tsx scripts/post-verify.ts",
+        "post-talktostaff-prod": "tsx scripts/post-talktostaff.ts --prod",
+        "post-verify-prod": "tsx scripts/post-verify.ts --prod",
         "typecheck": "tsc --noEmit -p ."
     },
     "dependencies": {
