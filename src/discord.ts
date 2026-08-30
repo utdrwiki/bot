@@ -3,6 +3,7 @@ import {
     APIApplicationCommandInteraction,
     APIInteraction,
     APIInteractionResponse,
+    APIMessage,
     APIMessageComponentInteraction,
     APIModalSubmitInteraction,
     APIPrivateThreadChannel,
@@ -183,13 +184,30 @@ export async function addRole(
  * @param channelId ID of the channel to send the message to
  * @param body Message content
  * @param token Bot token
+ * @returns Promise that resolves to the sent message
  */
-export async function sendMessage(
+export function sendMessage(
     channelId: string,
     body: RESTPostAPIChannelMessageJSONBody,
     token: string
+): Promise<APIMessage> {
+    return getRest(token)
+        .post(Routes.channelMessages(channelId), {body}) as Promise<APIMessage>;
+}
+
+/**
+ * Edits a message in a Discord channel.
+ * @param message The message to edit
+ * @param body New message content
+ * @param token Bot token
+ */
+export async function editMessage(
+    message: APIMessage,
+    body: RESTPostAPIChannelMessageJSONBody,
+    token: string
 ): Promise<void> {
-    await getRest(token).post(Routes.channelMessages(channelId), {body});
+    await getRest(token)
+        .patch(Routes.channelMessage(message.channel_id, message.id), {body});
 }
 
 /**

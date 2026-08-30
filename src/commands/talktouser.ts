@@ -8,6 +8,7 @@ import {
 import {
     addRole,
     createPrivateThread,
+    editMessage,
     ephemeralMessage,
     sendMessage
 } from '../discord';
@@ -45,7 +46,10 @@ export async function talkToUser(
             env.BOT_TOKEN
         );
     }
-    await sendMessage(thread.id, {
+    const message = await sendMessage(thread.id, {
+        content: `Hello <@${user}>, a staff member wanted to speak to you privately. They will be in this thread shortly.`
+    }, env.BOT_TOKEN);
+    await editMessage(message, {
         content: `Hello <@${user}>, a <@&${groupId}> member wanted to speak to you privately. They will be in this thread shortly.`
     }, env.BOT_TOKEN);
     return ephemeralMessage(`Private thread has been created: <#${thread.id}>.`);

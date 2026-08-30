@@ -6,6 +6,7 @@ import {
 } from 'discord-api-types/v10';
 import {
     createPrivateThread,
+    editMessage,
     ephemeralMessage,
     getUser,
     sendMessage
@@ -33,7 +34,10 @@ export async function talkToStaff(
         `${counter.toString().padStart(4, '0')}`,
         env.BOT_TOKEN
     );
-    await sendMessage(thread.id, {
+    const message = await sendMessage(thread.id, {
+        content: `Hello <@${user}>! This is a private thread between you and staff. Please write about your issue, and the staff will arrive shortly!`
+    }, env.BOT_TOKEN);
+    await editMessage(message, {
         content: `Hello <@${user}>! This is a private thread between you and <@&${groupId}>. Please write about your issue, and the staff will arrive shortly!`
     }, env.BOT_TOKEN);
     return ephemeralMessage(`Your private thread has been created: <#${thread.id}>. Please write about your issue there and a staff member will soon respond!`);
