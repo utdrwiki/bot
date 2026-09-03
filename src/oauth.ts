@@ -111,8 +111,6 @@ export async function handleOAuth(
         }
         await env.KV.put(kvKey, String(wikiUserInfo.sub));
         await sendMessage(env.VERIFY_USERNAME_CHANNEL, {
-            // eslint-disable-next-line camelcase
-            allowed_mentions: {parse: []},
             content: `<@${discordUserId}> - [${wikiUserInfo.username}](<https://undertale.wiki/User:${encodeURIComponent(wikiUserInfo.username)}>)`
         }, env.BOT_TOKEN);
         await addRole(
