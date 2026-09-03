@@ -33,7 +33,7 @@ async function main() {
             type: ComponentType.ActionRow
         }],
         // eslint-disable-next-line max-len
-        content: '# Talk to staff\nIf you have an issue that you would like to discuss with the staff privately, click the button below.\n**Please note:** if your issue does not require privacy, we will direct you to the public channels. Please only use this option for issues that require privacy, such as reporting a user in the server.'
+        content: '# Talk to staff\nIf you have an issue that you would like to discuss with the staff privately, click the button below.\n**This is for:**\n- Reporting users in the server\n- Other kinds of private staff discussions that you could not post about in a public channel\n**This is NOT for:**\n- Suggesting changes to the wiki: use <#507371882740318220> instead\n- Suggesting changes to the server: use <#210838806587244544> instead'
     };
     const channelId = vars.parsed.TALKTOSTAFF_CHANNEL;
     const messageId = vars.parsed.TALKTOSTAFF_MESSAGE ?? '0';
